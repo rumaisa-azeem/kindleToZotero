@@ -4,3 +4,4 @@ bin/
 lib/
 user.txt
 .DS_Store
+test.py

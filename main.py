@@ -135,3 +135,8 @@ for book_title in book_titles:
     except Exception as e:
         print('Error: ' + e.__str__())
 
+'''
+to do:
+- add date accessed using earliest date from clippings
+- get proper title from clippings instead of using book_title
+'''
