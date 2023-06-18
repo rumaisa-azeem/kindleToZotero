@@ -46,7 +46,7 @@ def get_book_titles() -> list:
     try:
         with open(USER_FILE, 'r') as f:
             books = f.readlines()
-            for i in range(5,len(books)):
+            for i in range(6,len(books)):
                 book_titles.append(books[i].strip())
         return book_titles
     except Exception as e:
@@ -67,7 +67,7 @@ def import_clippings() -> list:
     return clippings
 
 
-def get_clippings_for_book(book_title: str, clippings: list) -> list:
+def get_clippings_for_book(book_title: str) -> list:
     '''
     Get clippings for a specific book
     @param: book_title title of book to get clippings for
@@ -76,36 +76,62 @@ def get_clippings_for_book(book_title: str, clippings: list) -> list:
     '''
     clippings_for_book = []
     regex = r"Your Highlight .*:..:.."
-    for clipping in clippings:
+    for clipping in all_clippings:
         clipping = re.split(regex, clipping)
         if book_title.lower() in clipping[0].lower():
             clippings_for_book.append(clipping[1].replace('\n', ''))
     return clippings_for_book
 
 
+def get_author_for_book(book_title:str) -> list:
+    '''
+    Get author for a specific book
+    @param: book_title title of book to get author for
+    @param: clippings list of all clippings
+    @return author for specified book
+    '''
+    
+    for clipping in all_clippings:
+        clipping_title = re.split(r"- Your Highlight .*:..:..", clipping)[0] # split into title/author and clipping
+        if book_title.lower() in clipping_title.lower(): # if title matches
+            s = re.findall(r'\(.*\)', clipping_title)[0] # find author
+            s = re.sub(r"[\(\)]", "", s)
+            if len(s.split(', ')) == 2:
+                s = s.split(', ')
+                s.reverse()
+                return s
+            else:
+                return s.split(' ')
+            
+def add_book(book_title: str):
+    b = zot.item_template('book')
+    b['title'] = book_title    
+    b['creators'][0]['firstName'], b['creators'][0]['lastName'] = get_author_for_book(book_title)
+    try:
+        resp = zot.create_items([b])
+        return resp['success']['0']
+    except Exception as e:
+        print('Error: ' + e)
+        
+
 book_titles = get_book_titles() 
 all_clippings = import_clippings() 
 creds = get_credentials()
 zot = zotero.Zotero(creds[0], creds[1], creds[2])
+t2 = zot.item_template('note')
 
-# pprint.pprint(zot.item_template('book'), width=1)
 
-for book in book_titles:
-    clippings = get_clippings_for_book(book, all_clippings)
-    for c in clippings:
-        print('\n'+ c)
-    # template = zot.item_template('book')
+for book_title in book_titles:
     
-
-
-# items = zot.top(limit=30)
-# for item in items:
-#     print(item['data']['title'])
-#     item_id = item['data']['key']
-#     children = zot.children(item_id)
-#     for child in children:
-#         if (child['data']['itemType'] == 'note'):
-#             print(child['data']['note'])
-#     print()
-
+    book_id = add_book(book_title)
+    
+    notes = []
+    for clipping in get_clippings_for_book(book_title):
+        n = zot.item_template('note')
+        n['note'] = clipping
+        notes.append(n)
+    try:
+        zot.create_items(notes, parentid=book_id)
+    except Exception as e:
+        print('Error: ' + e.__str__())
 
