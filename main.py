@@ -1,11 +1,24 @@
 from pyzotero import zotero
 import os
 import shutil
-import pprint
 import re
+import platform
+
 
 MAIN_DIR = os.getcwd()
 USER_FILE = MAIN_DIR + '/user.txt'
+
+def get_kindle_path() -> str:
+    '''
+    Get path to Kindle directory depending on OS
+    '''
+    if platform.system() == 'Darwin':
+        return '/Volumes/Kindle/documents'
+    elif platform.system() == 'Windows':
+        return 'D:\Documents'
+    else:
+        print('ERROR: Unsupported OS')
+        exit(1)
 
 
 def copy_clippings_from_kindle():
@@ -13,10 +26,10 @@ def copy_clippings_from_kindle():
     Copy 'My Clippings.txt' from Kindle to current directory
     '''
     try:
-        os.chdir('/Volumes/Kindle/documents')
+        os.chdir(get_kindle_path())
         shutil.copy('My Clippings.txt', MAIN_DIR)
     except:
-        print('ERROR: Unable to access Kindle/documents/My Clippings.txt')
+        print('ERROR: Unable to access Kindle/Documents/My Clippings.txt')
         exit(1)
 
 
@@ -61,9 +74,9 @@ def import_clippings() -> list:
     @return: clippings list
     '''
     print('Importing clippings from Kindle...')
-    # copy_clippings_from_kindle()
+    copy_clippings_from_kindle()
     CLIPPINGS_FILE = MAIN_DIR + '/My Clippings.txt'
-    with open(CLIPPINGS_FILE, 'r') as f:
+    with open(CLIPPINGS_FILE, 'r', encoding='utf-8') as f:
         clippings = f.readlines()
         clippings = "".join(clippings).split('==========')
     return clippings
