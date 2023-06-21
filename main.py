@@ -1,7 +1,6 @@
 from pyzotero import zotero
 import os
 import shutil
-import pprint
 import re
 
 MAIN_DIR = os.getcwd()
