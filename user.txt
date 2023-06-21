@@ -1,0 +1,6 @@
+# Enter the following details from your Zotero account after the : on each line
+LIBRARY ID:
+LIBRARY TYPE: 
+API KEY: 
+
+# Enter the title of each book to transfer, each on a new line, below
