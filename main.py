@@ -44,6 +44,7 @@ def get_book_titles() -> list:
     '''
     book_titles = []
     try:
+        print('Getting book titles...')
         with open(USER_FILE, 'r') as f:
             books = f.readlines()
             for i in range(6,len(books)):
@@ -59,6 +60,7 @@ def import_clippings() -> list:
     Get clippings from 'My Clippings.txt'
     @return: clippings list
     '''
+    print('Importing clippings from Kindle...')
     # copy_clippings_from_kindle()
     CLIPPINGS_FILE = MAIN_DIR + '/My Clippings.txt'
     with open(CLIPPINGS_FILE, 'r') as f:
@@ -122,6 +124,7 @@ t2 = zot.item_template('note')
 
 
 for book_title in book_titles:
+    print('Adding ' + book_title + ' to Zotero...')
     
     book_id = add_book(book_title)
     
@@ -135,6 +138,7 @@ for book_title in book_titles:
     except Exception as e:
         print('Error: ' + e.__str__())
 
+print('Done')
 '''
 to do:
 - add date accessed using earliest date from clippings
