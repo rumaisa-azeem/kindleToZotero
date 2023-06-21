@@ -3,7 +3,6 @@ import os
 import shutil
 import re
 import platform
-import codecs
 
 
 MAIN_DIR = os.getcwd()
