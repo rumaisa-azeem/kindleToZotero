@@ -5,3 +5,5 @@ lib/
 user.txt
 .DS_Store
 test.py
+Scripts/
+user.txt

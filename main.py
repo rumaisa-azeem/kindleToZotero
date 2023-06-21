@@ -3,6 +3,7 @@ import os
 import shutil
 import re
 import platform
+import codecs
 
 
 MAIN_DIR = os.getcwd()
@@ -74,9 +75,9 @@ def import_clippings() -> list:
     @return: clippings list
     '''
     print('Importing clippings from Kindle...')
-    # copy_clippings_from_kindle()
+    copy_clippings_from_kindle()
     CLIPPINGS_FILE = MAIN_DIR + '/My Clippings.txt'
-    with open(CLIPPINGS_FILE, 'r') as f:
+    with open(CLIPPINGS_FILE, 'r', encoding='utf-8') as f:
         clippings = f.readlines()
         clippings = "".join(clippings).split('==========')
     return clippings
